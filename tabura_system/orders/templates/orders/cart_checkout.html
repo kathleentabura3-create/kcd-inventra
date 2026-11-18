@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Checkout - KCD Inventra</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f8f9fa; }
+        .container { max-width: 500px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: auto; }
+        h2 { color: #333; margin-top: 0; }
+        .summary-box { background: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .total { color: #28a745; font-weight: bold; font-size: 1.2em; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0 15px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #28a745; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1em; font-weight: bold; }
+        button:hover { background: #218838; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #6c757d; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Complete Cart Checkout</h2>
+
+        <div class="summary-box">
+            <p><strong>Total Items in Cart:</strong> {{ cart|length }}</p>
+            <p class="total">Total Amount: ₱{{ total|floatformat:2 }}</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <label for="customer_name">Your Name:</label>
+            <input type="text" id="customer_name" name="customer_name" required>
+
+            <label for="customer_email">Email Address:</label>
+            <input type="email" id="customer_email" name="customer_email" required>
+
+            <label for="shipping_address">Shipping Address:</label>
+            <textarea id="shipping_address" name="shipping_address" rows="3" required></textarea>
+
+            <button type="submit">Place Order</button>
+        </form>
+
+        <a href="{% url 'cart_detail' %}" class="back-link">← Back to Cart</a>
+    </div>
+</body>
+</html>

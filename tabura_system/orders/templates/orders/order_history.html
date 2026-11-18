@@ -1,0 +1,62 @@
+
+
+{% extends 'orders/base.html' %}
+
+{% block title %}Order History - KCD Inventra{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .order-wrapper {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+        h2 { color: var(--text-main); margin-top: 0; font-size: 1.5rem; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        th { background-color: #f8fafc; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .status { font-weight: 600; color: #16a34a; background: #dcfce7; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; display: inline-block; }
+        .btn-link { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .btn-link:hover { text-decoration: underline; }
+        .back-link { display: inline-block; margin-top: 20px; color: #93c5fd; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="order-wrapper">
+        <h2>Customer Order History</h2>
+        
+        {% if orders %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Name</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td style="font-weight: 600; color: var(--text-main);">#{{ order.id }}</td>
+                            <td style="color: var(--text-main);">{{ order.customer_name }}</td>
+                            <td style="font-weight: 600; color: #16a34a;">₱{{ order.total_amount }}</td>
+                            <td><span class="status">{{ order.status }}</span></td>
+                            <td><a href="{% url 'order_success' order.id %}" class="btn-link">View Details</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color: var(--text-muted); font-size: 1rem; margin: 30px 0;">No orders have been placed yet.</p>
+        {% endif %}
+
+    
+    </div>
+{% endblock %}

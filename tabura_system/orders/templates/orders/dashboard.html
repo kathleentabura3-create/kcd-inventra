@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - KCD Inventra</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .btn-link { display: inline-block; background: #6c757d; color: white; padding: 8px 14px; text-decoration: none; border-radius: 4px; font-size: 0.95em; }
+        .btn-link:hover { opacity: 0.9; }
+        .grid-container { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-container { grid-template-columns: 1fr; } }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2, h3 { margin-top: 0; color: #212529; }
+        .info-row { margin-bottom: 12px; font-size: 0.95em; }
+        .info-label { font-weight: bold; color: #6c757d; display: inline-block; width: 120px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; font-size: 0.95em; }
+        th { background-color: #f1f3f5; color: #495057; }
+        .status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; background: #ffc107; color: #212529; }
+        .empty-text { color: #6c757d; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <div class="header-bar">
+        <h2>👤 Customer Dashboard</h2>
+        <div>
+            <a href="{% url 'product_list' %}" class="btn-link" style="background: #343a40;">🏠 Back to Store</a>
+            <a href="{% url 'cart_detail' %}" class="btn-link" style="background: #ffc107; color: #212529; font-weight: bold;">🛒 View Cart</a>
+            <a href="{% url 'logout' %}" class="btn-link" style="background: #dc3545;">Logout</a>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <!-- Left Column: Account Information -->
+        <div>
+            <div class="card">
+                <h3>Account Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Username:</span> {{ request.user.username }}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span> {{ request.user.email|default:"Not provided" }}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Joined:</span> {{ request.user.date_joined|date:"M d, Y" }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Recent Orders & Quick History -->
+        <div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">Recent Orders</h3>
+                    <a href="{% url 'order_history' %}" style="color: #007bff; text-decoration: none; font-size: 0.9em; font-weight: bold;">View All History →</a>
+                </div>
+
+                {% if recent_orders %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td style="color: #28a745; font-weight: bold;">₱{{ order.total_amount }}</td>
+                                    <td><span class="status-badge">{{ order.status }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="empty-text">You haven't placed any orders yet. Head over to the store to make your first purchase!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

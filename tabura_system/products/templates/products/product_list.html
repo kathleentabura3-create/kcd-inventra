@@ -1,0 +1,501 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCD Inventra - Storefront</title>
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #043261;
+            --sidebar-bg: #fffefe;
+            --card-bg: #ffffffd3;
+            --text-main: #0f172a;
+            --text-muted: #00183a;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Layout */
+        .sidebar {
+            width: 260px;
+            box-sizing: border-box; /* Keeps padding inside the 260px width */
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.02);
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            height: 75px;
+            margin-bottom: 35px;
+            padding: 0 5px;
+        }
+
+        .sidebar-brand img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand span {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: #aed0f0d7;
+            color: var(--text-main);
+        }
+
+        .menu-item.active {
+            background: #ccd3dd;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Main Content Area - Offset by 260px sidebar + 30px gap */
+        .main-content {
+            margin-left: 290px; /* Increase or decrease this to adjust the sidebar gap */
+            flex: 1;
+            padding: 50px 40px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 1100px; /* Centers and constrains storefront width */
+        }
+
+        /* Filter & Search Bar */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn-search {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-search:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-clear {
+            padding: 12px 14px;
+            background: #e2e8f0;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Category Filter Pills */
+/* Category Dropdown */
+.category-dropdown-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.cat-select {
+    padding: 12px 16px;
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    min-width: 180px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cat-select:hover,
+.cat-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+
+        /* Suggestions Dropdown */
+        .suggestions-box {
+            position: absolute;
+            top: 52px;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .suggestion-item {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Product Grid & Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(0,0,0,0.15);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            background: #f1f5f9;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7em;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            align-self: flex-start;
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+            color: var(--text-main);
+        }
+
+        .price {
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 1.15em;
+            margin: 0 0 6px 0;
+        }
+
+        .stock {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            margin-bottom: 16px;
+        }
+
+        .btn-buy {
+            display: block;
+            text-align: center;
+            margin-top: auto;
+            background: #fef08a;
+            color: #854d0e;
+            font-weight: 600;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .btn-buy:hover {
+            background: #fde047;
+        }
+
+        .btn-login-buy {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-login-buy:hover {
+            background: #e2e8f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #93c5fd;
+            padding: 60px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Navigation -->
+    <aside class="sidebar">
+<div class="sidebar-brand">
+    <img src="{% static 'image/kcd_logo.png' %}" alt="KCD Inventra Logo">
+    <span>KCD</span>
+</div>
+        
+        <div class="sidebar-menu">
+            <a href="{% url 'product_list' %}" class="menu-item active">
+                🏠 Storefront
+            </a>
+            <a href="{% url 'cart_detail' %}" class="menu-item">
+                🛒 View Cart
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'order_history' %}" class="menu-item">
+                    📦 Order History
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="sidebar-footer">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="menu-item">
+                    ⚙️ Dashboard
+                </a>
+                <a href="{% url 'logout' %}" class="menu-item" style="color: #dc2626;">
+                    🚪 Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="menu-item" style="color: var(--primary);">
+                    🔐 Login
+                </a>
+                <a href="{% url 'register' %}" class="menu-item" style="color: #10b981;">
+                    📝 Register
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- Main Content Panel (Centered Storefront) -->
+    <main class="main-content">
+        <div class="content-container">
+            
+            <!-- Search Bar & Category Filter Bar -->
+            <div class="filter-bar">
+                <div class="search-wrapper">
+                    <form method="GET" action="{% url 'product_list' %}" class="search-form">
+                        <input type="text" id="search-input" name="q" value="{{ query|default:'' }}" placeholder="Search products..." autocomplete="off" class="search-input">
+                        <button type="submit" class="btn-search">Search</button>
+                        
+                        {% if query or product_id or selected_category %}
+                            <a href="{% url 'product_list' %}" class="btn-clear">Clear</a>
+                        {% endif %}
+                    </form>
+                    <div id="suggestions-box" class="suggestions-box"></div>
+                </div>
+
+                <div class="category-dropdown-wrapper">
+    <form method="GET" action="{% url 'product_list' %}" id="category-form">
+        <!-- Preserves the search query if the user is currently searching -->
+        {% if query %}
+            <input type="hidden" name="q" value="{{ query }}">
+        {% endif %}
+
+
+    </form>
+</div>
+            </div>
+
+            <!-- Product Grid -->
+            {% if products %}
+                <div class="grid">
+                    {% for product in products %}
+                        <div class="card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-img">
+                            {% endif %}
+                            
+                            {% if product.category %}
+                                <span class="category-badge">{{ product.category.name }}</span>
+                            {% endif %}
+
+                            <h3>{{ product.name }}</h3>
+                            <p class="price">₱{{ product.price }}</p>
+                            <p class="stock">In Stock: {{ product.stock }}</p>
+                            
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'add_to_cart' product.id %}" class="btn-buy">Add to Cart</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn-buy btn-login-buy">🔐 Login to Buy</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No products found{% if query %} matching "{{ query }}"{% endif %}. <a href="{% url 'product_list' %}" style="color: #93c5fd; text-decoration: underline;">View all products</a></p>
+                </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <!-- JavaScript for Live Suggestions -->
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const suggestionsBox = document.getElementById('suggestions-box');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            if (query.length === 0) {
+                suggestionsBox.style.display = 'none';
+                suggestionsBox.innerHTML = '';
+                return;
+            }
+
+            fetch(`{% url 'product_suggestions' %}?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results.length > 0) {
+                        let html = '';
+                        data.results.forEach(product => {
+                            html += `<a href="?product_id=${product.id}" class="suggestion-item">
+                                <strong>${product.name}</strong> • ₱${product.price}
+                            </a>`;
+                        });
+                        suggestionsBox.innerHTML = html;
+                        suggestionsBox.style.display = 'block';
+                    } else {
+                        suggestionsBox.style.display = 'none';
+                        suggestionsBox.innerHTML = '';
+                    }
+                });
+        });
+
+        document.addEventListener('mousedown', function(e) {
+            if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
